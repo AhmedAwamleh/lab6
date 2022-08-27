@@ -10,6 +10,7 @@ export default class ShowInfo extends Component {
 
 
 
+
             </>
         )
     }

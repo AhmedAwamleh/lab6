@@ -5,6 +5,8 @@ import SearchForm from './components/searchForm';
 import ShowInfo from './components/showInfo';
 import Map from './components/map';
 import ErrorClass from './components/errorComponent';
+import Footer from './components/footer';
+import Weather from './components/weather';
 
 class App extends Component {
   constructor(props) {
@@ -16,7 +18,9 @@ class App extends Component {
       map_Src: '',
       displayInfo: false,
       errorMsg: '',
-      displayError: false
+      displayError: false,
+      weatherData: [],
+      isWeather: false
 
 
     }
@@ -35,6 +39,7 @@ class App extends Component {
 
 
       this.setState({
+
         display_name: city.data[0].display_name,
         latitude: city.data[0].lat,
         longitude: city.data[0].lon,
@@ -43,11 +48,12 @@ class App extends Component {
 
 
       })
-      this.showMap(city.data[0].lat, city.data[0].lon)
+      this.showMap(city.data[0].lat, city.data[0].lon);
+      this.showWeather(searchQuery, city.data[0].lat, city.data[0].lon)
 
     } catch (error) {
 
-      console.log(error)
+
       this.setState({
         displayInfo: false,
         displayError: true,
@@ -66,10 +72,36 @@ class App extends Component {
       map_Src: mapSr
     })
   }
+
+
+
+  showWeather = async (searchQuery, lat, lon) => {
+    try {
+      const WeatherInfo = await axios.get(`http://localhost:3002/weather?searchQuery=${searchQuery}&lat=${lat}&lon=${lon}`)
+      console.log(WeatherInfo)
+      this.setState = ({
+        weatherData: WeatherInfo.data,
+        isWeather: true
+      })
+    } catch (error) {
+      this.setState({
+        errorMsg: error.response.status + '' + error.response.data.error,
+        displayError: true,
+        isWeather: false,
+        displayInfo: false
+      })
+
+    }
+
+
+  }
+
+
+
   render() {
     return (
       <div className="App" >
-        <h1>hello</h1>
+        <h1>CITY</h1>
         <SearchForm submitHandle={this.displayLocation} />
 
         {this.state.displayInfo &&
@@ -81,11 +113,17 @@ class App extends Component {
         {this.state.displayError &&
           <ErrorClass error={this.state.errorMsg} />
         }
-      </div>
+        {this.state.isWeather &&
+          <Weather weatherState={this.state.weatherData} />
+        }
+
+        <Footer />
+      </div >
+
     );
 
   }
 
-}
 
+}
 export default App;
