@@ -7,6 +7,7 @@ import Map from './components/map';
 import ErrorClass from './components/errorComponent';
 import Footer from './components/footer';
 import Weather from './components/weather';
+import Movie from './components/movie';
 
 class App extends Component {
   constructor(props) {
@@ -20,7 +21,10 @@ class App extends Component {
       errorMsg: '',
       displayError: false,
       weatherData: [],
-      isWeather: false
+      isWeather: false,
+      movieArr: [],
+      showMovies: false,
+
 
 
     }
@@ -50,6 +54,7 @@ class App extends Component {
       })
       this.showMap(city.data[0].lat, city.data[0].lon);
       this.showWeather(searchQuery, city.data[0].lat, city.data[0].lon)
+      this.showMovie(searchQuery)
 
     } catch (error) {
 
@@ -57,7 +62,7 @@ class App extends Component {
       this.setState({
         displayInfo: false,
         displayError: true,
-        errorMsg: error.response.status + '' + error.response.data.error
+        // errorMsg: error.response.status + '' + error.response.data.error
       })
     }
 
@@ -77,24 +82,41 @@ class App extends Component {
 
   showWeather = async (searchQuery, lat, lon) => {
     try {
-      const WeatherInfo = await axios.get(`http://localhost:3002/weather?searchQuery=${searchQuery}&lat=${lat}&lon=${lon}`)
-      console.log(WeatherInfo)
-      this.setState = ({
+      const WeatherInfo = await axios.get(`http://localhost:3005/weather?searchQuery=${searchQuery}&lat=${lat}&lon=${lon}`)
+
+      this.setState({
         weatherData: WeatherInfo.data,
         isWeather: true
       })
     } catch (error) {
       this.setState({
-        errorMsg: error.response.status + '' + error.response.data.error,
+        // errorMsg: error.response.status + '' + error.response.data.error,
         displayError: true,
-        isWeather: false,
+
         displayInfo: false
       })
 
     }
-
-
   }
+
+  showMovie = async (searchQuery) => {
+    try {
+      const movieData = await axios.get(`http://localhost:3005/movies?searchQuery=${searchQuery}`)
+      console.log(movieData)
+      this.setState({
+        movieArr: movieData.data,
+        showMovies: true,
+
+      })
+    } catch (eroor) {
+
+      this.setState({
+
+      })
+    }
+  }
+
+
 
 
 
@@ -104,10 +126,12 @@ class App extends Component {
         <h1>CITY</h1>
         <SearchForm submitHandle={this.displayLocation} />
 
+
         {this.state.displayInfo &&
           <>
             <ShowInfo info={this.state}></ShowInfo>
             <Map showMymap={this.state.map_Src} />
+
           </>
         }
         {this.state.displayError &&
@@ -115,6 +139,9 @@ class App extends Component {
         }
         {this.state.isWeather &&
           <Weather weatherState={this.state.weatherData} />
+        }
+        {
+          <Movie testMovie={this.state.movieArr} />
         }
 
         <Footer />
