@@ -82,7 +82,7 @@ class App extends Component {
 
   showWeather = async (searchQuery, lat, lon) => {
     try {
-      const WeatherInfo = await axios.get(`http://localhost:3005/weather?searchQuery=${searchQuery}&lat=${lat}&lon=${lon}`)
+      const WeatherInfo = await axios.get(`http://localhost:3008/weather?searchQuery=${searchQuery}&lat=${lat}&lon=${lon}`)
 
       this.setState({
         weatherData: WeatherInfo.data,
@@ -101,7 +101,7 @@ class App extends Component {
 
   showMovie = async (searchQuery) => {
     try {
-      const movieData = await axios.get(`http://localhost:3005/movies?searchQuery=${searchQuery}`)
+      const movieData = await axios.get(`http://localhost:3008/movies?searchQuery=${searchQuery}`)
       console.log(movieData)
       this.setState({
         movieArr: movieData.data,
